@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>7 Nguyên Tắc Thuyết Phục (Cialdini)</title>
+    
+    <!-- Tải Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Import Google Font 'Oswald' -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Áp dụng font Oswald làm font chữ chính */
+        body {
+            font-family: 'Oswald', sans-serif;
+            background-color: #f4f7f6;
+        }
+        
+        /* Định nghĩa 7 màu chủ đạo cho 7 nguyên tắc */
+        :root {
+            --color-1-reciprocity: #FF9800; /* Cam (Đáp Trả) - Từ prompt */
+            --color-2-scarcity: #E91E63;    /* Hồng Đậm (Khan Hiếm) */
+            --color-3-authority: #1a237e;   /* Xanh Tối (Uy Quyền) - Từ prompt */
+            --color-4-commitment: #009688;  /* Xanh Lá (Cam Kết) - Từ prompt */
+            --color-5-liking: #FFC107;      /* Vàng (Yêu Thích) */
+            --color-6-socialproof: #5C6BC0; /* Xanh Vừa (Bằng Chứng Xã Hội) - Từ prompt */
+            --color-7-unity: #673AB7;       /* Tím (Sự Thống Nhất) */
+        }
+
+        /* Styles cho các Tab Case Study */
+        .case-tab {
+            @apply px-6 py-3 text-lg font-semibold text-gray-500 border-b-4 border-transparent transition-all duration-300 ease-in-out;
+        }
+        .case-tab.active {
+            @apply text-[var(--color-3-authority)] border-[var(--color-3-authority)];
+        }
+        .case-tab:hover:not(.active) {
+            @apply text-[var(--color-3-authority)] border-[var(--color-3-authority)]/50;
+        }
+
+        /* Styles cho Thẻ Kéo (Draggable Card) */
+        .draggable-card {
+            @apply p-4 mb-4 bg-white border border-gray-300 rounded-lg shadow-md cursor-grab transition-all duration-200 ease-in-out;
+            opacity: 1;
+            transform: scale(1);
+        }
+        .draggable-card:hover {
+            @apply shadow-lg scale-[1.03];
+        }
+        .draggable-card.dragging {
+            @apply opacity-50 bg-gray-200 shadow-xl scale-105 cursor-grabbing;
+        }
+        
+        /* Styles cho Vùng Thả (Drop Zone) */
+        .drop-zone {
+            @apply min-h-[180px] p-4 bg-white border-2 border-dashed border-gray-400 rounded-2xl transition-all duration-300 flex flex-col items-center justify-center text-center;
+        }
+        .drop-zone.drag-over {
+            @apply border-solid scale-105 shadow-inner;
+        }
+        
+        /* Styles cho trạng thái thả đúng */
+        .card-correct {
+            @apply opacity-80 cursor-not-allowed shadow-inner bg-gray-100;
+        }
+
+        /* Animation Lắc (Shake) khi thả sai */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); }
+            20%, 40%, 60%, 80% { transform: translateX(8px); }
+        }
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        /* Styles cho Modal Phản Hồi */
+        #feedback-modal {
+            @apply fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity duration-300;
+        }
+        #feedback-modal.hidden {
+            @apply opacity-0 pointer-events-none;
+        }
+        #modal-overlay {
+            @apply absolute inset-0 bg-black/60;
+        }
+        #modal-content {
+            @apply relative z-10 w-full max-w-2xl bg-white p-8 rounded-2xl shadow-xl transform transition-transform duration-300;
+        }
+        #feedback-modal.hidden #modal-content {
+            @apply scale-95;
+        }
+        #feedback-modal:not(.hidden) #modal-content {
+            @apply scale-100;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- HEADER -->
+    <header class="text-white shadow-2xl" style="background-color: var(--color-3-authority);">
+        <div class="max-w-7xl mx-auto px-6 py-8 text-center">
+            <h1 class="text-5xl md:text-6xl font-bold uppercase tracking-wide">7 Đòn Bẩy Thuyết Phục</h1>
+            <p class="text-2xl mt-2 font-light text-gray-300">Làm Chủ 7 Nguyên Tắc Của Cialdini Trong Quản Trị Nhân Sự</p>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto p-4 md:p-8 mt-[-40px] z-10 relative">
+
+        <!-- LỜI DẪN NHẬP (TỪ VAI TRÒ COPYWRITER) -->
+        <section class="mb-12 bg-white p-8 rounded-2xl shadow-xl">
+            <h2 class="text-3xl font-semibold mb-4 text-center" style="color: var(--color-3-authority);">TỪ TRỰC GIÁC TỚI KHOA HỌC</h2>
+            <p class="text-lg text-gray-700 max-w-4xl mx-auto text-center leading-relaxed">
+                Nếu Aristotle cho chúng ta "CÁI GÌ" (Ethos, Pathos, Logos), thì Robert Cialdini cho chúng ta "LÀM THẾ NÀO".
+                Đây là 7 đòn bẩy tâm lý đã được khoa học chứng minh để thúc đẩy sự đồng thuận và dẫn dắt sự thay đổi.
+                Hãy xem bạn có thể nhận diện chúng trong các tình huống Nhân sự quen thuộc không.
+            </p>
+        </section>
+
+        <!-- KHU VỰC TƯƠNG TÁC CHÍNH -->
+        <section class="bg-white p-4 md:p-8 rounded-2xl shadow-2xl">
+
+            <!-- 1. BỘ CHỌN CASE STUDY -->
+            <div id="case-selector" class="flex flex-col sm:flex-row justify-center border-b-2 border-gray-200 mb-8">
+                <button data-case="1" class="case-tab active">Case 1: Quản Trị Thay Đổi</button>
+                <button data-case="2" class="case-tab">Case 2: Gắn Kết & Giữ Chân</button>
+                <button data-case="3" class="case-tab">Case 3: Thu Hút Nhân Tài</button>
+            </div>
+
+            <!-- 2. NỘI DUNG CASE STUDY (Sẽ được JS render) -->
+            <div id="case-content" class="mb-8">
+                <!-- Case Study Title -->
+                <h3 id="case-title" class="text-3xl font-bold text-center mb-2" style="color: var(--color-3-authority);"></h3>
+                <!-- Case Study Context -->
+                <p id="case-context" class="text-xl text-center text-gray-600 mb-8 max-w-3xl mx-auto"></p>
+            </div>
+
+            <!-- 3. KHU VỰC KÉO THẢ -->
+            <div class="flex flex-col lg:flex-row gap-8">
+                
+                <!-- CỘT BÊN TRÁI: CÁC THẺ BÀI (DRAGGABLE) -->
+                <div class="w-full lg:w-1/3 p-4 bg-gray-50 rounded-xl shadow-inner">
+                    <h4 class="text-xl font-semibold text-center mb-4 text-gray-700">CÁC CHIẾN THUẬT (Kéo thả)</h4>
+                    <div id="source-cards-container">
+                        <!-- Thẻ bài sẽ được JS render vào đây -->
+                    </div>
+                </div>
+
+                <!-- CỘT BÊN PHẢI: CÁC VÙNG THẢ (7 NGUYÊN TẮC) -->
+                <div class="w-full lg:w-2/3 grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    <!-- 1. Reciprocity -->
+                    <div id="drop-reciprocity" class="drop-zone border-[var(--color-1-reciprocity)]" data-zone="reciprocity">
+                        <span class="w-16 h-16 rounded-full flex items-center justify-center text-white" style="background-color: var(--color-1-reciprocity);">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13C9.828 5.65 8.528 4 6.5 4S3.172 5.65 1 8m11-4c2.172 2.35 3.472 4 5.5 4s3.328-1.65 5.5-4M1 8h22M1 8v13m22-13v13"></path></svg>
+                        </span>
+                        <h5 class="text-xl font-bold mt-2" style="color: var(--color-1-reciprocity);">1. ĐÁP TRẢ (Reciprocity)</h5>
+                    </div>
+                    
+                    <!-- 2. Scarcity -->
+                    <div id="drop-scarcity" class="drop-zone border-[var(--color-2-scarcity)]" data-zone="scarcity">
+                        <span class="w-16 h-16 rounded-full flex items-center justify-center text-white" style="background-color: var(--color-2-scarcity);">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0-8c-1.11 0-2.08.402-2.599 1M12 18v-1m0 1v-8m0 8c1.657 0 3-.895 3-2s-1.343-2-3-2-3-.895-3-2 1.343-2 3-2"></path></svg>
+                        </span>
+                        <h5 class="text-xl font-bold mt-2" style="color: var(--color-2-scarcity);">2. KHAN HIẾM (Scarcity)</h5>
+                    </div>
+
+                    <!-- 3. Authority -->
+                    <div id="drop-authority" class="drop-zone border-[var(--color-3-authority)]" data-zone="authority">
+                        <span class="w-16 h-16 rounded-full flex items-center justify-center text-white" style="background-color: var(--color-3-authority);">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                        </span>
+                        <h5 class="text-xl font-bold mt-2" style="color: var(--color-3-authority);">3. UY QUYỀN (Authority)</h5>
+                    </div>
+
+                    <!-- 4. Commitment -->
+                    <div id="drop-commitment" class="drop-zone border-[var(--color-4-commitment)]" data-zone="commitment">
+                        <span class="w-16 h-16 rounded-full flex items-center justify-center text-white" style="background-color: var(--color-4-commitment);">
+                           <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                        </span>
+                        <h5 class="text-xl font-bold mt-2" style="color: var(--color-4-commitment);">4. CAM KẾT (Commitment)</h5>
+                    </div>
+
+                    <!-- 5. Liking -->
+                    <div id="drop-liking" class="drop-zone border-[var(--color-5-liking)]" data-zone="liking">
+                        <span class="w-16 h-16 rounded-full flex items-center justify-center text-white" style="background-color: var(--color-5-liking);">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21H9.47a2 2 0 01-1.928-2.546l2.714-9A2 2 0 0112.26 7h1.74zM6 21V9"></path></svg>
+                        </span>
+                        <h5 class="text-xl font-bold mt-2" style="color: var(--color-5-liking);">5. YÊU THÍCH (Liking)</h5>
+                    </div>
+
+                    <!-- 6. Social Proof -->
+                    <div id="drop-socialproof" class="drop-zone border-[var(--color-6-socialproof)]" data-zone="socialproof">
+                        <span class="w-16 h-16 rounded-full flex items-center justify-center text-white" style="background-color: var(--color-6-socialproof);">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-2.29A4 4 0 118.644 11H13a3 3 0 013 3v6z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 20v-2.29A4 4 0 017.29 15H8a3 3 0 013 3v2"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h4v.29A4 4 0 015.71 7H5a3 3 0 00-3 3v2"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 3h2.29A4 4 0 0111 5.71V6a3 3 0 01-3 3H7v-2a3 3 0 00-3-3V3z"></path></svg>
+                        </span>
+                        <h5 class="text-xl font-bold mt-2" style="color: var(--color-6-socialproof);">6. BẰNG CHỨNG XÃ HỘI</h5>
+                    </div>
+                    
+                    <!-- 7. Unity (Centered on the last row) -->
+                    <div id="drop-unity" class="drop-zone border-[var(--color-7-unity)] md:col-start-2" data-zone="unity">
+                        <span class="w-16 h-16 rounded-full flex items-center justify-center text-white" style="background-color: var(--color-7-unity);">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10l2.5 2.5m0 0l2.5 2.5M15.5 12.5l2.5-2.5M15.5 12.5l-2.5 2.5M3 10l2.5 2.5m0 0l2.5 2.5M5.5 12.5l2.5-2.5M5.5 12.5l-2.5 2.5m9-5l-1.414-1.414A2 2 0 0012.172 6H11.5a3.5 3.5 0 00-3.5 3.5v1M3 16v-2a3.5 3.5 0 013.5-3.5H8"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 16v-2a3.5 3.5 0 00-3.5-3.5H16m-7 0H7.5a3.5 3.5 0 00-3.5 3.5V16"></path></svg>
+                        </span>
+                        <h5 class="text-xl font-bold mt-2" style="color: var(--color-7-unity);">7. THỐNG NHẤT (Unity)</h5>
+                    </div>
+
+                </div>
+            </div>
+            
+            <!-- Nút Reset -->
+            <div class="text-center mt-8">
+                <button id="reset-button" class="px-8 py-3 text-lg font-semibold text-white rounded-lg shadow-md transition-transform duration-200 hover:scale-105" style="background-color: var(--color-3-authority);">
+                    CHƠI LẠI CASE NÀY
+                </button>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="text-center p-8 mt-12 text-gray-300" style="background-color: var(--color-3-authority);">
+        <p class="text-lg">Rosie Đào Hạnh Giang CEO Build Talents</p>
+    </footer>
+
+    <!-- MODAL PHẢN HỒI (Feedback) -->
+    <div id="feedback-modal" class="hidden">
+        <!-- Lớp phủ mờ -->
+        <div id="modal-overlay" class="cursor-pointer"></div>
+        
+        <!-- Nội dung Modal -->
+        <div id="modal-content">
+            <h3 id="modal-title" class="text-3xl font-bold mb-4"></h3>
+            <div id="modal-body" class="text-lg text-gray-700 leading-relaxed space-y-4">
+                <p><strong>Chiến thuật của bạn:</strong></p>
+                <blockquote id="modal-quote" class="p-4 bg-gray-100 border-l-4 rounded-r-lg italic"></blockquote>
+                <p><strong>Phân tích (Tại sao lại như vậy):</strong></p>
+                <p id="modal-explanation"></p>
+            </div>
+            <button id="modal-close" class="mt-8 px-6 py-2 text-lg font-semibold text-white rounded-lg shadow" style="background-color: var(--color-6-socialproof);">
+                Đã hiểu
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA STORE (Nội dung từ vai trò Copywriter) ---
+        // Nơi chứa toàn bộ nội dung học thuật cho 7 nguyên tắc
+        const contentData = {
+            "1": { // Case Study 1
+                title: 'Case Study 1: Quản Trị Thay Đổi',
+                context: 'Bạn (HR) cần thuyết phục nhân viên sử dụng một hệ thống phần mềm quản lý công việc mới, thay cho Excel.',
+                cards: [
+                    {
+                        id: 'c1-authority',
+                        text: 'CTO và Giám đốc Vận hành đã phân tích và xác nhận đây là giải pháp tối ưu, bảo mật nhất cho 5 năm tới.',
+                        correctZone: 'authority',
+                        feedbackTitle: 'ĐÚNG! ĐÓ LÀ UY QUYỀN (Authority)',
+                        feedback: 'Bạn đang sử dụng "chuyên gia" (CTO) và "lãnh đạo cấp cao" (GĐ Vận hành) để bảo chứng cho quyết định. Khi một người có thẩm quyền lên tiếng, những người khác có xu hướng tuân theo.'
+                    },
+                    {
+                        id: 'c1-socialproof',
+                        text: 'Phòng Kế toán (nhóm 20 người) đã thử nghiệm và báo cáo tiết kiệm 5 giờ làm việc/tuần/người nhờ hệ thống này.',
+                        correctZone: 'socialproof',
+                        feedbackTitle: 'CHÍNH XÁC! ĐÓ LÀ BẰNG CHỨNG XÃ HỘI',
+                        feedback: 'Thay vì nói "hãy dùng đi", bạn chỉ ra rằng "những người giống bạn" (Phòng Kế toán) đã dùng và có kết quả tốt. Con người có xu hướng làm theo số đông, đặc biệt là những người có hoàn cảnh tương tự.'
+                    },
+                    {
+                        id: 'c1-commitment',
+                        text: 'Chúng tôi chỉ yêu cầu bạn cam kết tham gia 1 buổi training 30 phút. Chỉ cần tham gia, bạn sẽ được cấp tài khoản.',
+                        correctZone: 'commitment',
+                        feedbackTitle: 'TUYỆT VỜI! ĐÓ LÀ CAM KẾT (Commitment)',
+                        feedback: 'Bạn đang yêu cầu một "cam kết nhỏ" và công khai (đăng ký tham gia 30 phút). Khi một người đã thực hiện một hành động nhỏ, họ có xu hướng hành động nhất quán với cam kết đó (sử dụng phần mềm).'
+                    }
+                ]
+            },
+            "2": { // Case Study 2
+                title: 'Case Study 2: Gắn Kết & Giữ Chân',
+                context: 'Bạn (HR) đang thiết kế các chiến lược để giữ chân nhân tài và xây dựng văn hóa làm việc tích cực.',
+                cards: [
+                    {
+                        id: 'c2-reciprocity',
+                        text: 'Công ty bất ngờ tặng mọi người 1 ngày nghỉ "Mental Health Day" (không có trong hợp đồng) để tri ân nỗ lực của team.',
+                        correctZone: 'reciprocity',
+                        feedbackTitle: 'ĐÚNG! ĐÓ LÀ ĐÁP TRẢ (Reciprocity)',
+                        feedback: 'Khi công ty "cho đi trước" một món quà bất ngờ và có giá trị (ngày nghỉ), nhân viên sẽ cảm thấy "mắc nợ" và có xu hướng "đáp trả" lại bằng sự trung thành và nỗ lực cao hơn trong công việc.'
+                    },
+                    {
+                        id: 'c2-liking',
+                        text: 'Trong buổi 1:1, sếp đã dành 10 phút đầu chỉ để hỏi thăm về sở thích nuôi mèo và dự định du lịch của bạn.',
+                        correctZone: 'liking',
+                        feedbackTitle: 'CHÍNH XÁC! ĐÓ LÀ YÊU THÍCH (Liking)',
+                        feedback: 'Chúng ta dễ dàng đồng ý với người mình quý mến. Bằng cách tìm ra điểm tương đồng và thể hiện sự quan tâm chân thành (không chỉ về công việc), sếp đang xây dựng thiện cảm, khiến nhân viên cởi mở và gắn bó hơn.'
+                    },
+                    {
+                        id: 'c2-unity',
+                        text: 'Chúng ta đều là "Build Talents People". Chúng ta không chỉ làm việc, chúng ta cùng chung một sứ mệnh là...',
+                        correctZone: 'unity',
+                        feedbackTitle: 'TUYỆT VỜI! ĐÓ LÀ THỐNG NHẤT (Unity)',
+                        feedback: 'Đây là nguyên tắc mạnh nhất. Bằng cách dùng từ "chúng ta" và nhấn mạnh một "danh tính chung" (Build Talents People) và "sứ mệnh chung", bạn tạo ra cảm giác "cùng một bộ lạc". Con người sẽ làm mọi thứ vì người "trong nhóm".'
+                    }
+                ]
+            },
+            "3": { // Case Study 3
+                title: 'Case Study 3: Thu Hút Nhân Tài',
+                context: 'Bạn (Recruiter) đang "săn" một ứng viên xuất sắc nhưng họ cũng đang được nhiều nơi khác săn đón.',
+                cards: [
+                    {
+                        id: 'c3-scarcity',
+                        text: 'Đây là 1 trong 3 vị trí "Future-Maker" duy nhất được mở năm nay, với quyền lợi đặc biệt mà các vị trí khác không có.',
+                        correctZone: 'scarcity',
+                        feedbackTitle: 'ĐÚNG! ĐÓ LÀ KHAN HIẾM (Scarcity)',
+                        feedback: 'Con người khao khát những gì hiếm có, độc quyền, hoặc có giới hạn. Bằng cách định vị đây là cơ hội "duy nhất" (chỉ 3 vị trí) và "đặc biệt", bạn khiến ứng viên cảm thấy họ sẽ mất mát nếu bỏ lỡ.'
+                    },
+                    {
+                        id: 'c3-authority',
+                        text: 'Bạn sẽ được làm việc và mentoring trực tiếp bởi GĐ Công Nghệ, một chuyên gia hàng đầu về AI tại Việt Nam.',
+                        correctZone: 'authority',
+                        feedbackTitle: 'CHÍNH XÁC! ĐÓ LÀ UY QUYỀN (Authority)',
+                        feedback: 'Thay vì nói "môi trường tốt", bạn đưa ra một "chuyên gia" cụ thể. Uy tín và chuyên môn của người GĐ Công Nghệ này là một "thẩm quyền" bảo chứng cho giá trị mà ứng viên sẽ nhận được khi vào công ty.'
+                    },
+                    {
+                        id: 'c3-socialproof',
+                        text: '85% nhân viên trên Glassdoor nói rằng đây là "Nơi làm việc tuyệt vời". Bạn có thể xem các review thực tế...',
+                        correctZone: 'socialproof',
+                        feedbackTitle: 'TUYỆT VỜI! ĐÓ LÀ BẰNG CHỨNG XÃ HỘI',
+                        feedback: 'Khi không chắc chắn, ứng viên sẽ nhìn xem người khác (đặc biệt là nhân viên cũ/hiện tại) nói gì. Một con số ấn tượng (85%) và các review thực tế là bằng chứng xã hội mạnh mẽ, giảm bớt rủi ro khi họ ra quyết định.'
+                    }
+                ]
+            }
+        };
+
+        // --- CORE LOGIC (Vai trò Frontend Developer) ---
+
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // Lấy các DOM elements chính
+            const caseSelector = document.getElementById('case-selector');
+            const caseTitle = document.getElementById('case-title');
+            const caseContext = document.getElementById('case-context');
+            const sourceContainer = document.getElementById('source-cards-container');
+            const dropZones = document.querySelectorAll('.drop-zone');
+            const resetButton = document.getElementById('reset-button');
+            const modal = document.getElementById('feedback-modal');
+            const modalOverlay = document.getElementById('modal-overlay');
+            const modalClose = document.getElementById('modal-close');
+
+            let currentCaseId = '1'; // Bắt đầu ở Case 1
+            let draggedCard = null;
+
+            // --- 1. Chức năng Render Case Study ---
+            function renderCase(caseId) {
+                const data = contentData[caseId];
+                if (!data) return;
+
+                // Cập nhật tiêu đề và bối cảnh
+                caseTitle.textContent = data.title;
+                caseContext.textContent = data.context;
+
+                // Xóa thẻ bài và vùng thả cũ
+                sourceContainer.innerHTML = '';
+                dropZones.forEach(zone => {
+                    // Xóa các card đã thả
+                    const droppedCards = zone.querySelectorAll('.draggable-card');
+                    droppedCards.forEach(card => card.remove());
+                    // Reset giao diện
+                    zone.classList.remove('border-green-500', 'bg-green-50');
+                });
+
+                // Tạo các thẻ bài mới
+                data.cards.forEach(cardData => {
+                    const card = document.createElement('div');
+                    card.className = 'draggable-card';
+                    card.setAttribute('draggable', 'true');
+                    card.dataset.cardId = cardData.id;
+                    card.dataset.correctZone = cardData.correctZone;
+                    card.textContent = cardData.text;
+                    sourceContainer.appendChild(card);
+                    
+                    // Thêm sự kiện Kéo
+                    card.addEventListener('dragstart', handleDragStart);
+                    card.addEventListener('dragend', handleDragEnd);
+                });
+            }
+
+            // --- 2. Chức năng Chuyển Tab (Case Selector) ---
+            caseSelector.addEventListener('click', (e) => {
+                if (e.target.classList.contains('case-tab')) {
+                    // Cập nhật trạng thái active
+                    caseSelector.querySelector('.active').classList.remove('active');
+                    e.target.classList.add('active');
+                    
+                    // Render lại case mới
+                    currentCaseId = e.target.dataset.case;
+                    renderCase(currentCaseId);
+                }
+            });
+            
+            // --- 3. Chức năng Reset ---
+            resetButton.addEventListener('click', () => {
+                renderCase(currentCaseId);
+            });
+
+            // --- 4. Logic Kéo Thả (Drag & Drop) ---
+            
+            function handleDragStart(e) {
+                draggedCard = this;
+                e.dataTransfer.setData('text/plain', this.dataset.cardId);
+                setTimeout(() => this.classList.add('dragging'), 0);
+            }
+
+            function handleDragEnd() {
+                this.classList.remove('dragging');
+                draggedCard = null;
+            }
+
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', handleDragOver);
+                zone.addEventListener('dragleave', handleDragLeave);
+                zone.addEventListener('drop', handleDrop);
+            });
+
+            function handleDragOver(e) {
+                e.preventDefault(); // Cần thiết để cho phép drop
+                this.classList.add('drag-over', `border-[${getZoneColor(this.dataset.zone)}]`);
+            }
+
+            function handleDragLeave() {
+                this.classList.remove('drag-over');
+            }
+
+            function handleDrop(e) {
+                e.preventDefault();
+                this.classList.remove('drag-over');
+
+                if (!draggedCard) return;
+
+                const targetZone = this.dataset.zone;
+                const correctZone = draggedCard.dataset.correctZone;
+
+                if (targetZone === correctZone) {
+                    // --- THẢ ĐÚNG ---
+                    this.appendChild(draggedCard);
+                    draggedCard.setAttribute('draggable', 'false');
+                    draggedCard.classList.add('card-correct');
+                    this.classList.add('border-green-500', 'bg-green-50');
+                    
+                    // Hiển thị modal phản hồi
+                    showFeedback(draggedCard.dataset.cardId);
+                } else {
+                    // --- THẢ SAI ---
+                    draggedCard.classList.add('shake');
+                    setTimeout(() => draggedCard.classList.remove('shake'), 500);
+                }
+            }
+
+            // --- 5. Chức năng Modal Phản Hồi ---
+            
+            function showFeedback(cardId) {
+                const caseData = contentData[currentCaseId];
+                const cardData = caseData.cards.find(c => c.id === cardId);
+                
+                if (!cardData) return;
+
+                document.getElementById('modal-title').textContent = cardData.feedbackTitle;
+                document.getElementById('modal-quote').textContent = cardData.text;
+                document.getElementById('modal-explanation').textContent = cardData.feedback;
+                
+                modal.classList.remove('hidden');
+            }
+
+            function closeFeedback() {
+                modal.classList.add('hidden');
+            }
+            
+            modalClose.addEventListener('click', closeFeedback);
+            modalOverlay.addEventListener('click', closeFeedback);
+
+            // --- 6. Hàm Helper lấy màu (cho đẹp) ---
+            function getZoneColor(zone) {
+                switch(zone) {
+                    case 'reciprocity': return 'var(--color-1-reciprocity)';
+                    case 'scarcity': return 'var(--color-2-scarcity)';
+                    case 'authority': return 'var(--color-3-authority)';
+                    case 'commitment': return 'var(--color-4-commitment)';
+                    case 'liking': return 'var(--color-5-liking)';
+                    case 'socialproof': return 'var(--color-6-socialproof)';
+                    case 'unity': return 'var(--color-7-unity)';
+                    default: return '#ccc';
+                }
+            }
+            
+            // --- Khởi động ứng dụng ---
+            renderCase(currentCaseId);
+        });
+    </script>
+</body>
+</html>
